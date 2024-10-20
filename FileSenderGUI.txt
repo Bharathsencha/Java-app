@@ -1,0 +1,128 @@
+This code is a simple Java Swing GUI (Graphical User Interface) application that allows a user to receive a file from a server over the network. Here’s a detailed breakdown of the code:
+
+1. Imports
+   - `javax.swing`: Provides the components for building the GUI, such as `JFrame`, `JButton`, `JLabel`, etc.
+   - `java.awt`: Includes basic GUI components like `Font`, `Dimension`, and `BorderLayout`.
+   - `java.awt.event`: Handles event actions like button clicks (`ActionEvent`).
+   - `java.io`: Deals with file input/output (e.g., `FileOutputStream`, `BufferedInputStream`).
+   - `java.net`: Enables networking operations, including creating `Socket` connections for file transfer.
+
+2. Class `FileReceiverGUI`
+   This class is responsible for creating the GUI and managing the file-receiving process.
+
+   Fields
+   - `JFrame frame`: The main window of the application.
+   - `JButton receiveFileButton`: A button to trigger the file-receiving process.
+   - `JLabel statusLabel`: Displays the current status of the file transfer.
+   - `JTextField ipField`: A text field for entering the server's IP address.
+
+   Constructor `FileReceiverGUI()`
+   This method sets up the user interface when the program is launched:
+   - A `JFrame` is created with the title "File Receiver" and a size of 400x250 pixels. It closes when the user clicks the close button (`EXIT_ON_CLOSE`).
+   - A `JPanel` is used to hold the GUI components, laid out in a vertical stack (`BoxLayout`).
+   - A label (`ipLabel`) prompts the user to enter the server’s IP address.
+   - An IP text field (`ipField`) is pre-filled with a default IP (`192.168.28.158`), which can be modified.
+   - A button (`receiveFileButton`) is provided to start receiving the file when clicked.
+   - A label (`statusLabel`) shows the current status of the operation (e.g., "Waiting to receive file...").
+   - All components are added to the `JPanel`, which is then added to the `JFrame`.
+   - An `ActionListener` is attached to the button to trigger the file-receiving operation when clicked.
+
+   Method `receiveFile()`
+   This method is responsible for handling the actual file transfer:
+
+   1. File Selection:
+      - A `JFileChooser` dialog is presented to the user to select where to save the received file. By default, the filename is set to `"received_file.txt"`.
+   
+   2. Server Connection:
+      - After the user selects a save location, the IP address is retrieved from `ipField`. If it's valid, the client creates a `Socket` connection to the server on port `5000` using the IP entered by the user.
+
+   3.Receiving the File:
+      - Once connected, the program sets up a `FileOutputStream` to save the incoming file to the selected location.
+      - A `BufferedInputStream` is used to read the data coming from the server, and the file data is written in chunks (using a buffer of 1024 bytes) to the chosen file until all data is received.
+      - After the transfer completes, the `statusLabel` displays the success message with the file path.
+
+   4.Error Handling:
+      - If there is an error during the connection or file transfer, the error is caught, and a message is shown in the `statusLabel`.
+   
+   5. Resource Cleanup:
+      - Whether the transfer succeeds or fails, all streams (`FileOutputStream`, `BufferedInputStream`) and the socket connection are closed in the `finally` block to release resources.
+
+3. Main Method
+   The `main` method simply creates an instance of the `FileReceiverGUI` class, which initializes the GUI and displays it to the user.
+
+
+Summary
+This application allows the user to:
+1. Enter a server IP address.
+2. Click a button to establish a connection with a file server.
+3. Choose where to save the incoming file.
+4. Receive a file from the server and save it to the specified location.
+5. Monitor the status of the operation using the status label.
+
+The `receiveFile` method handles the core networking logic by connecting to a server via `Socket`, receiving file data, and saving it to the local machine.
+=============================================================================================================================================
+This code creates a Java Swing GUI application that enables the user to send a file from their system to a client over a network. Let's break it down step by step:
+
+1. Imports
+   - `javax.swing`: Provides the components to build the GUI, such as `JFrame`, `JButton`, `JLabel`, etc.
+   - `java.awt`: Contains classes like `Font`, `Dimension`, and layout managers to organize the components within the GUI.
+   - `java.awt.event`: Handles events, such as when a button is clicked (`ActionListener`).
+   - `java.io`: Facilitates reading files from the system and writing them to a network socket (e.g., `FileInputStream`, `BufferedOutputStream`).
+   - `java.net`: Enables network communication using `ServerSocket` and `Socket` classes.
+
+2. Class `FileSenderGUI`
+   This class manages the GUI for selecting and sending a file.
+
+   Fields
+   - `JFrame frame`: The main window where the GUI components are displayed.
+   - `JButton selectFileButton`: A button that, when clicked, opens a file chooser to select the file to send.
+   - `JLabel statusLabel`: A label that shows the status of the operation (e.g., "No file selected", "File sent successfully").
+   - `File selectedFile`: Holds the file object once it’s selected by the user.
+
+   Constructor `FileSenderGUI()`
+   This method sets up the GUI and handles user interaction:
+   - `JFrame`: A window titled "File Sender" with a size of 400x200 pixels is created. The window will close when the user clicks the close button (`EXIT_ON_CLOSE`).
+   - `JPanel`: A `JPanel` is created to hold the GUI components, with a vertical layout (`BoxLayout`) to stack the components.
+   - `selectFileButton`: A button labeled "Select File to Send" is added, and its appearance is styled with a bold font.
+   - `statusLabel`: A label that initially shows "No file selected." It will be updated based on the user’s actions.
+   - Components are added to the panel, which is then placed in the frame’s center (`BorderLayout.CENTER`).
+  
+   ActionListener for the Button:
+   - When the button is clicked, a `JFileChooser` dialog is opened to allow the user to select a file.
+   - Once a file is selected, the file’s name is displayed on the `statusLabel`, and the method `sendFile` is called to initiate the file transfer.
+
+3. Method `sendFile(File file)`
+   This method handles the actual process of sending the selected file over the network:
+
+   1. Server Setup:
+      - A `ServerSocket` is created on port 5000, bound to the IP address `192.168.7.26`. This starts the server, allowing it to listen for incoming client connections.
+      - The `statusLabel` is updated to show "Waiting for client connection..." as the server waits for a client to connect.
+
+   2. Client Connection:
+      - Once a client connects, the server accepts the connection using `serverSocket.accept()`. At this point, a `Socket` is created to communicate with the client, and the `statusLabel` is updated to "Client connected. Sending file...".
+
+   3. Sending the File:
+      - The selected file is read into a byte array using a `FileInputStream`. The size of the byte array is determined by the file's length.
+      - A `BufferedOutputStream` is used to send the file data over the socket to the client.
+      - The byte array (containing the file’s data) is written to the socket, sending the file to the client in one go.
+      - After the file has been successfully sent, the `statusLabel` is updated to "File sent successfully!".
+
+   4.Error Handling:
+      - If an error occurs at any point (e.g., file read failure, connection issue), the error is caught, and the `statusLabel` is updated with "Failed to send file."
+
+   5. Resource Cleanup:
+      - The method ensures that all streams and sockets (both server and client) are properly closed in a `finally` block to avoid resource leaks.
+
+4. Main Method
+   The `main` method creates an instance of the `FileSenderGUI` class, which launches the GUI and allows the user to interact with it.
+
+
+
+Summary
+This program allows the user to:
+1. Open a GUI window where they can select a file from their system using a file chooser.
+2. After selecting the file, the program starts a server on a specified IP address and port (`192.168.7.26:5000`), waiting for a client to connect.
+3. Once a client connects, the selected file is sent over the network to the client.
+4. The `statusLabel` in the GUI keeps the user informed of the current operation's status, such as waiting for a connection or confirming the file was sent successfully.
+
+The method `sendFile` handles the core networking logic using a `ServerSocket` to wait for connections and a `Socket` to send the file to the client.
