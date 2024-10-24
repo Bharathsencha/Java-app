@@ -1,4 +1,4 @@
-This code is a simple Java Swing GUI (Graphical User Interface) application that allows a user to receive a file from a server over the network. Here’s a detailed breakdown of the code:
+This code is a simple Java Swing GUI (Graphical User Interface) application that allows a user to receive a file from a server over the network.
 
 1. Imports
    - `javax.swing`: Provides the components for building the GUI, such as `JFrame`, `JButton`, `JLabel`, etc.
