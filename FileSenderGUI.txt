@@ -61,7 +61,7 @@ This application allows the user to:
 
 The `receiveFile` method handles the core networking logic by connecting to a server via `Socket`, receiving file data, and saving it to the local machine.
 =============================================================================================================================================
-This code creates a Java Swing GUI application that enables the user to send a file from their system to a client over a network. Let's break it down step by step:
+This code creates a Java Swing GUI application that enables the user to send a file from their system to a client over a network.
 
 1. Imports
    - `javax.swing`: Provides the components to build the GUI, such as `JFrame`, `JButton`, `JLabel`, etc.
