@@ -1,4 +1,4 @@
-This program is a simple GUI-based file sender using Java Swing for the graphical interface and networking components (sockets) for file transmission. Let's break down each section for a detailed explanation:
+This program is a simple GUI-based file sender using Java Swing for the graphical interface and networking components (sockets) for file transmission. 
 
 1. Imports:
 java
