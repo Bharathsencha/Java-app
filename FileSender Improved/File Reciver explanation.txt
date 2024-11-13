@@ -1,0 +1,143 @@
+Overview:
+This Java program is a File Receiver GUI that listens for a file from a sender. 
+The program uses a " Socket " connection to receive the file and a verification code to ensure the transfer is secure. 
+If the code is correct the file is saved to the specified directory on the user's computer.
+
+Components:
+1. " JFrame ": The main GUI window.
+2. " JButton ": A button to initiate file reception.
+3. " ObjectInputStream ": Used to receive objects (in this case, the verification code and file data) from the sender.
+4. " Socket ": Network connection between the sender and receiver.
+5. " FileOutputStream ": To save the received file on the local system.
+6. " JOptionPane ": Used for displaying input dialogs and messages.
+
+Detailed Explanation of the Code:
+
+1. Class Declaration:
+    ---> Code
+    public class FileReceiver1 extends JFrame {
+    
+   - The "FileReceiver1" class extends "JFrame" which means it will create a window (GUI) for the application.
+   - The constructor "FileReceiver1()" initializes the window sets up the layout and defines the button for receiving files.
+
+2. Constructor ("FileReceiver1"):
+    ---> Code
+    public FileReceiver1() {
+        super("File Receiver (Localhost)");
+        setLayout(new FlowLayout());
+        receiveFileButton = new JButton("Receive File");
+        add(receiveFileButton);
+    
+   - "super("File Receiver (Localhost)")" sets the window's title.
+   - "setLayout(new FlowLayout())" defines the layout manager for arranging components in the window.
+   - A button "receiveFileButton" is created with the label "Receive File" and added to the window.
+
+3. Button Action Listener :
+    ---> Code
+    receiveFileButton.addActionListener(e -> {
+        String inputCode = JOptionPane.showInputDialog("Enter the 6-digit code:");
+        receiveFile(inputCode);
+    });
+    
+   - When the "Receive File" button is clicked an action listener prompts the user to enter a 6-digit verification
+     code using "JOptionPane.showInputDialog()".
+   - After getting the input the "receiveFile()" method is called passing the input code to check the validity before
+     receiving the file.
+
+4. Setting Window Size and Closing Operation :
+    ---> Code
+    setSize(300, 100);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    setVisible(true);
+    
+   - This code sets the window's size to 300x100 pixels, and ensures that the application will close when the user clicks
+     the close button on the window.
+
+5. Method : "receiveFile(String inputCode)" :
+   - This method handles the main functionality of receiving the file. The method receives the file only if the 
+     verification code matches the one sent by the sender.
+
+   --->Code
+   public void receiveFile(String inputCode) {
+       String directoryPath = "YOUR_PATH";
+       File directory = new File(directoryPath);
+   
+   - This sets the directory where the received files will be stored. If the directory does not exist it is created 
+     using "mkdirs()".
+
+6. Connecting to the Sender (Socket) :
+   --->Code
+    try (Socket socket = new Socket("localhost", 1234);
+         ObjectInputStream in = new ObjectInputStream(socket.getInputStream())) {
+    
+   - A socket is created that connects to the sender on the same machine ("localhost") using port 1234.
+   - "ObjectInputStream" is used to read objects sent over the network.
+
+7. Receiving the Code and File Information:
+   --->Code
+
+    String receivedCode = (String) in.readObject();
+    String fileName = (String) in.readObject();
+    
+   - The code first receives the verification code ("receivedCode") sent by the sender. It also receives the file name
+     ("fileName") to know how to save the received file.
+
+8. Code Validation:
+    ---> Code
+
+    if (!receivedCode.equals(inputCode)) {
+        JOptionPane.showMessageDialog(this, "Incorrect code. File transfer canceled.");
+        return;
+    }
+    
+   - The received code is compared with the entered "inputCode". If they don't match, the transfer is canceled and a
+     message is shown.
+
+9. Receiving and Saving the File :
+    --->Code
+
+    String savePath = directoryPath + "\\" + fileName;
+    try (FileOutputStream fileOut = new FileOutputStream(savePath)) {
+        byte[] buffer = new byte[4096];
+        int bytesRead;
+        while ((bytesRead = in.read(buffer)) != -1) {
+            fileOut.write(buffer, 0, bytesRead);
+        }
+    }
+    
+   - The "FileOutputStream" is used to write the received file data to the specified location.
+   - The file is read in chunks of 4096 bytes. If there's more data it is written to the output file until the stream 
+     ends (when "bytesRead == -1").
+
+10. Message After File Reception :
+    --->Code
+
+    JOptionPane.showMessageDialog(this, "File received and saved to: " + savePath);
+    
+   - Once the file is received and saved,a success message is displayed showing the location where the file is saved.
+
+11. Exception Handling :
+    ---->Code
+
+    catch (IOException | ClassNotFoundException e) {
+        JOptionPane.showMessageDialog(this, "Error receiving file: " + e.getMessage());
+        e.printStackTrace();
+    }
+    
+   - If any error occurs during the file reception an error message is displayed and the stack trace is printed for 
+     debugging.
+
+12.Main Method ("main") :
+    --->
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(FileReceiver1::new);
+    }
+    
+   - This method starts the application by creating an instance of "FileReceiver1". The "SwingUtilities.invokeLater"
+     ensures that the GUI is initialized on the Event Dispatch Thread.
+
+Summary:
+
+The program sets up a simple GUI for receiving files from a sender over a local connection. The file is received only 
+if the correct 6-digit code is entered by the user. The file is saved in a predefined directory on the desktop and 
+the program handles both successful file reception and error situations (like an incorrect code or other I/O errors).
